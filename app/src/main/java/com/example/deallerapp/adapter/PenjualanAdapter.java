@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.example.deallerapp.R;
 import com.example.deallerapp.model.Penjualan;
 

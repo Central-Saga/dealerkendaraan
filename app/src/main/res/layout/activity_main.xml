@@ -19,7 +19,7 @@
     <!-- Logo -->
     <ImageView
         android:id="@+id/logoImage"
-        android:layout_width="200dp"
+        android:layout_width="300dp"
         android:layout_height="200dp"
         android:layout_marginTop="60dp"
         android:src="@mipmap/ic_launcher"
@@ -37,7 +37,7 @@
 
     <TextView
         android:id="@+id/tvNamadealler"
-        android:text="Ketut Sumadi"
+        android:text="I Ketut Sumadi"
         android:textSize="22sp"
         android:textStyle="bold"
         android:layout_marginTop="24dp"
