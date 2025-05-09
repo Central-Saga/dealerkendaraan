@@ -8,12 +8,15 @@ import android.os.Bundle;
 import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
@@ -22,17 +25,16 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 public class TambahProdukActivity extends AppCompatActivity {
 
-    private static final int PICK_IMAGE_REQUEST = 100;
-
     private EditText etNama, etMerk, etHarga, etPenumpang;
     private ImageView imgPreview;
+    private Spinner spinnerGambar;
     private Button btnSimpan;
+
     private String imageBase64 = null;
 
     private ArrayList<Kendaraan> listKendaraan;
@@ -44,7 +46,6 @@ public class TambahProdukActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tambah_produk);
 
-        // Setup toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -53,18 +54,14 @@ public class TambahProdukActivity extends AppCompatActivity {
         etHarga = findViewById(R.id.etHarga);
         etPenumpang = findViewById(R.id.etPenumpang);
         imgPreview = findViewById(R.id.imgPreview);
+        spinnerGambar = findViewById(R.id.spinnerGambar);
         btnSimpan = findViewById(R.id.btnSimpan);
-        Button btnUpload = findViewById(R.id.btnUpload);
 
         gson = new Gson();
         sharedPreferences = getSharedPreferences("data_kendaraan", MODE_PRIVATE);
         listKendaraan = loadData();
 
-        btnUpload.setOnClickListener(v -> {
-            Intent intent = new Intent(Intent.ACTION_PICK);
-            intent.setType("image/*");
-            startActivityForResult(intent, PICK_IMAGE_REQUEST);
-        });
+        setupSpinner();
 
         btnSimpan.setOnClickListener(v -> {
             String nama = etNama.getText().toString().trim();
@@ -73,7 +70,7 @@ public class TambahProdukActivity extends AppCompatActivity {
             String penumpangStr = etPenumpang.getText().toString().trim();
 
             if (nama.isEmpty() || merk.isEmpty() || hargaStr.isEmpty() || penumpangStr.isEmpty() || imageBase64 == null) {
-                Toast.makeText(this, "Lengkapi semua data & upload gambar!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Lengkapi semua data & pilih gambar!", Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -86,30 +83,43 @@ public class TambahProdukActivity extends AppCompatActivity {
 
             Toast.makeText(this, "Kendaraan berhasil disimpan!", Toast.LENGTH_SHORT).show();
 
-            // Reset form
             etNama.setText("");
             etMerk.setText("");
             etHarga.setText("");
             etPenumpang.setText("");
+            spinnerGambar.setSelection(0);
             imgPreview.setImageResource(android.R.drawable.ic_input_add);
             imageBase64 = null;
         });
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+    private void setupSpinner() {
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+                this,
+                R.array.gambar_kendaraan,
+                android.R.layout.simple_spinner_item
+        );
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerGambar.setAdapter(adapter);
 
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null) {
-            try {
-                InputStream inputStream = getContentResolver().openInputStream(data.getData());
-                Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+        spinnerGambar.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                int resId = R.drawable.car_red;
+                switch (position) {
+                    case 0: resId = R.drawable.car_red; break;
+                    case 1: resId = R.drawable.car_blue; break;
+                    case 2: resId = R.drawable.car_black; break;
+                }
+
+                Bitmap bitmap = BitmapFactory.decodeResource(getResources(), resId);
                 imgPreview.setImageBitmap(bitmap);
                 imageBase64 = encodeToBase64(bitmap);
-            } catch (Exception e) {
-                e.printStackTrace();
             }
-        }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
     }
 
     private String encodeToBase64(Bitmap bitmap) {
@@ -140,12 +150,12 @@ public class TambahProdukActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.menu_tambah) {
-            return true;
-        } else if (id == R.id.menu_jual) {
+        if (id == R.id.menu_tambah) return true;
+        if (id == R.id.menu_jual) {
             startActivity(new Intent(this, JualProdukActivity.class));
             return true;
-        } else if (id == R.id.menu_pendapatan) {
+        }
+        if (id == R.id.menu_pendapatan) {
             startActivity(new Intent(this, PendapatanActivity.class));
             return true;
         }

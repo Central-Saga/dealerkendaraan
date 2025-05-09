@@ -22,7 +22,7 @@
         android:layout_width="300dp"
         android:layout_height="200dp"
         android:layout_marginTop="60dp"
-        android:src="@mipmap/ic_launcher"
+        android:src="@drawable/img"
         android:contentDescription="Logo Dealer" />
 
     <!-- Judul Welcome -->

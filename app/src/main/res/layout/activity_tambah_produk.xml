@@ -74,6 +74,13 @@
                     android:gravity="center"
                     android:orientation="vertical">
 
+                    <Spinner
+                        android:id="@+id/spinnerGambar"
+                        android:layout_width="wrap_content"
+                        android:minHeight="50dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp" />
+
                     <ImageView
                         android:id="@+id/imgPreview"
                         android:layout_width="150dp"
@@ -81,12 +88,6 @@
                         android:background="#CCCCCC"
                         android:scaleType="centerCrop" />
 
-                    <Button
-                        android:id="@+id/btnUpload"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="Upload Gambar" />
                 </LinearLayout>
             </LinearLayout>
 
